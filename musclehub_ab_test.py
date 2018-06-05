@@ -5,9 +5,14 @@ Created on Thu May 31 07:03:42 2018
 
 @author: mark
 """
+import pandas as pd
+from matplotlib import pyplot as plt
+from scipy.stats import chi2_contingency
+
 #Import SQLite database from Codecademy and examine the tables
 #Tables included are visits, fitness_tests, applications, purchases
 from codecademySQL import sql_query
+
 sql_query('''
 SELECT *
 FROM visits
@@ -60,11 +65,49 @@ WHERE visits.visit_date >= '7-1-17'
 
 
 #Investigate groups A and B
-import pandas as pd
-from matplotlib import pyplot as plt
+
 
 #Add column to new dataset
-#A if fitness_test_date is not None and B if fitness_test_date is None
+#Label A if there is a fitness_test_date and B if there is no fitness_test_date
 df['ab_test_group'] = df.fitness_test_date.apply(lambda x: \
-  'B' if x == 'None' else 'A')
+  'B' if pd.isna(x) else 'A')
+
+#Check the size of the sample sets A and B
+ab_counts = df.groupby('ab_test_group').first_name.count().reset_index()
+print(ab_counts)
+
+#Create a pie chart of this information
+#test_groups = ['Fitness Test', 'No Fitness Test']
+plt.figure(figsize=(10,8))
+plt.pie(ab_counts.first_name.values, labels=['Fitness Test', 'No Fitness Test'], autopct='%0.2f%%')
+plt.axis('equal')
+plt.title('Test Groups', size=18)
+plt.show()
+
+#Add another column and show how many people filled out and application
+df['is_application'] = df.application_date.apply(lambda y: \
+  'No Application' if pd.isna(y) else 'Application')
 print(df.head(10))
+
+#Count how many from Group A and Group B do or don't pick up an application.
+app_counts = df.groupby(['ab_test_group', 'is_application']).first_name.count().reset_index()
+print(app_counts)
+
+#Pivot table so the index is ab_test_group with our columns as is_application
+app_pivot = app_counts.pivot(columns = 'is_application',
+                             index = 'ab_test_group',
+                             values = 'first_name')\
+            .reset_index()
+print(app_pivot)
+
+#Sum totals of Application and No Application
+app_pivot['Total'] = app_pivot.Application + app_pivot['No Application']
+print(app_pivot)
+
+#Calculate the percent if applications
+app_pivot['Percent with Application'] = app_pivot.Application / app_pivot.Total * 1.0
+print(app_pivot)
+
+#Run a Chi2 test to see if percent application is significant (p<0.05)
+chi2, pval, dof, expected = chi2_contingency(app_pivot)
+print pval
