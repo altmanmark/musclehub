@@ -84,9 +84,11 @@ plt.axis('equal')
 plt.title('Test Groups', size=18)
 plt.show()
 
+
+#Who picks up and application?
 #Add another column and show how many people filled out and application
 df['is_application'] = df.application_date.apply(lambda y: \
-  'No Application' if pd.isna(y) else 'Application')
+                                                 'No Application' if pd.isna(y) else 'Application')
 print(df.head(10))
 
 #Count how many from Group A and Group B do or don't pick up an application.
@@ -109,5 +111,45 @@ app_pivot['Percent with Application'] = app_pivot.Application / app_pivot.Total 
 print(app_pivot)
 
 #Run a Chi2 test to see if percent application is significant (p<0.05)
-chi2, pval, dof, expected = chi2_contingency(app_pivot)
-print pval
+table = [[250, 2254], [325, 2175]]
+chi2, pval_1, dof, expected = chi2_contingency(table)
+print pval_1
+
+
+#Who purchases a membership?
+#Add column to determine membership by if there is a purchase date
+df['is_member'] = df.purchase_date.apply(lambda z: \
+                                                 'Not Member' if pd.isna(z) else 'Member')
+print(df.head(10))
+
+#Create a dataframe with only those who picked up an application
+just_apps = df[df.is_application == 'Application']
+print(just_apps.head(10))
+
+#Group those who picked up an application by membership
+member_counts = just_apps.groupby(['ab_test_group', 'is_member']).first_name.count().reset_index()
+
+member_pivot = member_counts.pivot(columns = 'is_member',
+                               index = 'ab_test_group',
+                               values = 'first_name')\
+               .reset_index()
+               
+#Sum totals of Member and Not Member. Then calculate the percentage
+member_pivot['Total'] = member_pivot.Member + member_pivot['Not Member']
+
+member_pivot['Percent Purchase'] = member_pivot.Member / member_pivot.Total * 1.0
+print member_pivot
+
+
+#Null hypothesis is that there is no statisitcal difference in someone buying a membership if they peformed a
+#fitness test and picked up an application
+
+member_table = [[200, 50], [250, 75]]
+chi2, pval_2, dof, expected = chi2_contingency(member_table)
+print pval_2
+#pval_2 is .43 which means we have to accept our null hypothesis
+
+
+#Create one more look where we figure out the percentage of All Visitors and 
+#if they purchased a membership
+
