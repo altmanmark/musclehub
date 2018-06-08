@@ -152,4 +152,18 @@ print pval_2
 
 #Create one more look where we figure out the percentage of All Visitors and 
 #if they purchased a membership
+final_member_counts = df.groupby(['ab_test_group', 'is_member']).first_name.count().reset_index()
 
+final_member_pivot = final_member_counts.pivot(columns = 'is_member',
+                               index = 'ab_test_group',
+                               values = 'first_name')\
+               .reset_index()
+
+final_member_pivot['Total'] = final_member_pivot.Member + final_member_pivot['Not Member']
+
+final_member_pivot['Percent Purchase'] = final_member_pivot.Member / final_member_pivot.Total * 1.0
+print final_member_pivot
+
+final_member_table = [[200, 2304], [250, 2250]]
+chi2, pval_3, dof, expected = chi2_contingency(final_member_table)
+print pval_3
