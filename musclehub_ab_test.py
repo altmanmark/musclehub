@@ -167,3 +167,52 @@ print final_member_pivot
 final_member_table = [[200, 2304], [250, 2250]]
 chi2, pval_3, dof, expected = chi2_contingency(final_member_table)
 print pval_3
+
+#Create bar charts to show comparisons between
+#Visitors who applied
+#Applicants who purchased a membership
+#Visitors who purchased a membership
+
+#Percentage of Visitors who applied
+plt.figure(figsize=(10,8))
+ax = plt.subplot()
+plt.bar(range(len(app_pivot)),
+        app_pivot['Percent with Application'].values,
+        color='xkcd:Coral')
+ax.set(title='Percentage of Visitors who Applied')
+ax.xaxis.set(ticks=range(len(app_pivot)),
+             ticklabels=['Fitness Test', 'No Fitness Test'])
+ax.yaxis.set(ticks=[0, 0.05, 0.10, 0.15, 0.20],
+             ticklabels=['0%', '5%', '10%', '15%', '20%'])
+plt.show()
+#plt.savefig('Percent_Visitors.png' transparent=True)
+
+#Percentage of applicants who purchased a membership
+plt.figure(figsize=(10,8))
+ax = plt.subplot()
+plt.bar(range(len(member_pivot)),
+        member_pivot['Percent Purchase'].values,
+        color='xkcd:blue')
+ax.set(title='Percentage of Applicants who are Members',
+       ylim=[0.60, 0.85])
+ax.xaxis.set(ticks=range(len(member_pivot)),
+             ticklabels=['Member', 'Not Member'])
+ax.yaxis.set(ticks=[0.60, 0.65, 0.70, 0.75,  0.80, 0.85],
+             ticklabels=['60%', '65%', '70%', '75%', '80%', '85%'])
+plt.show()
+#plt.savefig('Percent_Member_Application.png' transparent=True)
+
+#Percentage of visitors who purchased a membership
+plt.figure(figsize=(10,8))
+ax = plt.subplot()
+plt.bar(range(len(final_member_pivot)),
+        final_member_pivot['Percent Purchase'].values,
+        color='xkcd:teal')
+ax.set(title='Percentage of Visitors who are Members',
+       ylim=[0.0, 0.15])
+ax.xaxis.set(ticks=range(len(final_member_pivot)),
+             ticklabels=['Member', 'Not Member'])
+ax.yaxis.set(ticks=[0, 0.05, 0.10, 0.15],
+             ticklabels=['0%', '5%', '10%', '15%'])
+plt.show()
+#plt.savefig('Percent_Member_Visitor.png' transparent=True)
