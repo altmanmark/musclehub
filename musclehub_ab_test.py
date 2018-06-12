@@ -41,7 +41,7 @@ LIMIT 5
 
 #Create giant database from the 4 provided datasets
 #Createa  query where we pull data from visits on or after 7-1-17.
-#Left join the other tabels based on first_name, last_name, and email
+#Left join the other tables based on first_name, last_name, and email
 df = sql_query('''
 SELECT visits.first_name,
        visits.last_name,
@@ -153,7 +153,7 @@ final_member_counts = df.groupby(['ab_test_group', 'is_member']).first_name.coun
 final_member_pivot = final_member_counts.pivot(columns = 'is_member',
                                index = 'ab_test_group',
                                values = 'first_name')\
-               .reset_index()
+                     .reset_index()
 
 final_member_pivot['Total'] = final_member_pivot.Member + final_member_pivot['Not Member']
 
