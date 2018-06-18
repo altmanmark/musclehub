@@ -9,7 +9,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 import matplotlib as mpl
 from scipy.stats import chi2_contingency
-mpl.rcParams['font.size'] = 14.0
+mpl.rcParams['font.size'] = 18.0
 
 #Import SQLite database from Codecademy and examine the tables
 #Tables included are visits, fitness_tests, applications, purchases
@@ -78,7 +78,7 @@ ab_counts = df.groupby('ab_test_group').first_name.count().reset_index()
 
 #Create a pie chart of this information
 #test_groups = ['Fitness Test', 'No Fitness Test']
-plt.figure(figsize=(10,8))
+plt.figure(figsize=(12,8))
 plt.pie(ab_counts.first_name.values, 
         labels=['Fitness Test', 'No Fitness Test'], 
         colors=['#7EDFA0', '#DF7EBD'], 
@@ -86,7 +86,7 @@ plt.pie(ab_counts.first_name.values,
         labeldistance=1.1, 
         startangle=90)
 plt.axis('equal')
-plt.title('Test Groups', size=18)
+plt.title('Test Groups', size=24)
 #plt.show()
 plt.savefig('Test-Groups_pie-chart.png', transparent=True)
 
@@ -110,6 +110,7 @@ app_pivot['Total'] = app_pivot.Application + app_pivot['No Application']
 
 #Calculate the percent if applications
 app_pivot['Percent with Application'] = app_pivot.Application / app_pivot.Total * 1.0
+print(app_pivot)
 
 #Run a Chi2 test to see if percent application is significant (p<0.05)
 table = [[250, 2254], [325, 2175]]
@@ -136,6 +137,7 @@ member_pivot = member_counts.pivot(columns = 'is_member',
 member_pivot['Total'] = member_pivot.Member + member_pivot['Not Member']
 
 member_pivot['Percent Purchase'] = member_pivot.Member / member_pivot.Total * 1.0
+print(member_pivot)
 
 
 #Null hypothesis is that there is no statisitcal difference in someone buying a membership if they peformed a
@@ -158,6 +160,7 @@ final_member_pivot = final_member_counts.pivot(columns = 'is_member',
 final_member_pivot['Total'] = final_member_pivot.Member + final_member_pivot['Not Member']
 
 final_member_pivot['Percent Purchase'] = final_member_pivot.Member / final_member_pivot.Total * 1.0
+print(final_member_pivot)
 
 final_member_table = [[200, 2304], [250, 2250]]
 chi2, pval_3, dof, expected = chi2_contingency(final_member_table)
